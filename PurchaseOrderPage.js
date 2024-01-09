@@ -40,10 +40,12 @@ export const PurchaseOrderPage = () => {
   const [vendorCode, setVendorCode] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [value, setValue] = useState(""); //u/ deklarasi state
+  const [valueNmbr, setValueNmbr] = useState(""); //buat deklarasi state
 
   const filterVendorCode =
     user.vendor_code === null ? vendorCode : user.vendor_code;
+  const filterPurOrg =
+    user.purch_org === null ? valueNmbr : user.purch_org;
 
   useEffect(() => {
     // Reset on first load
@@ -58,7 +60,7 @@ export const PurchaseOrderPage = () => {
       ERDAT_START: startDate,
       ERDAT_END: endDate,
       confirm_to_vendor: "A",
-      purch_org: value, //parameter pembacaan u/ melakukan permintaan API
+      purch_org: filterPurOrg, //valueNmbr, //parameter pembacaan u/ melakukan permintaan API
       pageNo: 1,
       pageSize: 10,
     };
@@ -87,7 +89,7 @@ export const PurchaseOrderPage = () => {
         // Corrected the syntax here
         const action = await showErrorDialog(response.payload.data.message);
         if (action.isConfirmed) await history.push("/logout");
-        value = action.payload.value; // Corrected the syntax here
+        valueNmbr = action.payload.value; // Corrected the syntax here 
         setOverlayLoading(false);
       }
     } catch (error) {
@@ -115,6 +117,7 @@ export const PurchaseOrderPage = () => {
         ERDAT_START: startDate,
         ERDAT_END: endDate,
         confirm_to_vendor: "A",
+        purch_org: filterPurOrg, //valueNmbr,
         pageNo: page,
         pageSize: sizePerPage,
       };
@@ -297,9 +300,9 @@ export const PurchaseOrderPage = () => {
                           type="text"
                           placeholder="Purchasing Organization"
                           onChange={(e) => {
-                            setValue(e.target.value); //** */
+                            setValueNmbr(e.target.value); //UBAH VALUE
                           }}
-                          value={value} //** */
+                          value={valueNmbr}
                           onKeyPress={handleKeyPress}
                         />
                       </Col>
