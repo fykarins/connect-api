@@ -40,6 +40,7 @@ export const ClaimPage = () => {
   const pageSize = useSelector(selectPageSize);
   const [overlayLoading, setOverlayLoading] = useState(false);
   const totalRecord = useSelector(selectTotalRecord);
+  const [value, setValue] = useState(""); //u/ deklarasi state
 
   // Filter
   const [vendorCode, setVendorCode] = useState("");
@@ -61,12 +62,14 @@ export const ClaimPage = () => {
     );
   }, [dispatch]);
 
-  const handleSearch = async () => {
+  const handleSearch = async () => { //pemanggilan fungsi handle search
     const params = {
       LFNR1: filterVendorCode,
       pageNo: 1,
       pageSize: 10,
+      purch_org: value, //parameter pembacaan u/ melakukan permintaan API
     };
+    console.log("test value : " + params.value);
     try {
       const response = await dispatch(fetchClaim(params));
       if (response.payload.data.status === 200) {
@@ -75,16 +78,26 @@ export const ClaimPage = () => {
         response.payload.data.error === "10008" ||
         response.payload.data.error === "10009"
       ) {
+        // Corrected the syntax here
         const action = await showErrorDialog(response.payload.data.message);
         if (action.isConfirmed) await history.push("/logout");
       } else {
-        showErrorDialog(response.payload.data.message);
+        // Corrected the syntax here
+        const action = await showErrorDialog(response.payload.data.message);
+        if (action.isConfirmed) await history.push("/logout");
+        value = action.payload.value; // Corrected the syntax here
         setOverlayLoading(false);
       }
     } catch (error) {
       showErrorDialog(error.message);
       setOverlayLoading(false);
     }
+  };  
+
+  // API Service
+  const fetchInvoiceFromAPI = async (params) => {
+    const response = await fetch.post('/api/invoices', params);
+    return response.data;
   };
 
   const handleTableChange = async (
@@ -140,7 +153,7 @@ export const ClaimPage = () => {
     }
   };
 
-  const handleKeyPress = (event) => {
+  const handleKeyPress = (event) => { //pencarian saat menekan tombol enter
     if (event.key === "Enter") {
       handleSearch();
     }
@@ -268,9 +281,9 @@ export const ClaimPage = () => {
                           type="text"
                           placeholder="Purchasing Organization"
                           onChange={(e) => {
-                            setVendorCode(e.target.value);
+                            setValue(e.target.value); //** */
                           }}
-                          value={vendorCode}
+                          value={value} //** */
                           onKeyPress={handleKeyPress}
                         />
                       </Col>
