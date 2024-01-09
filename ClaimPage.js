@@ -40,7 +40,7 @@ export const ClaimPage = () => {
   const pageSize = useSelector(selectPageSize);
   const [overlayLoading, setOverlayLoading] = useState(false);
   const totalRecord = useSelector(selectTotalRecord);
-  const [value, setValue] = useState(""); //u/ deklarasi state
+  const [valueNmbr, setValueNmbr] = useState(""); //buat deklarasi state
 
   // Filter
   const [vendorCode, setVendorCode] = useState("");
@@ -48,6 +48,8 @@ export const ClaimPage = () => {
 
   const filterVendorCode =
     user.vendor_code === null ? vendorCode : user.vendor_code;
+  const filterPurOrg =
+    user.purch_org === null ? valueNmbr : user.purch_org;
 
   useEffect(() => {
     // Reset on first load
@@ -67,7 +69,7 @@ export const ClaimPage = () => {
       LFNR1: filterVendorCode,
       pageNo: 1,
       pageSize: 10,
-      purch_org: value, //parameter pembacaan u/ melakukan permintaan API
+      purch_org: filterPurOrg, //valueNmbr, //parameter pembacaan u/ melakukan permintaan API
     };
     console.log("test value : " + params.value);
     try {
@@ -85,7 +87,7 @@ export const ClaimPage = () => {
         // Corrected the syntax here
         const action = await showErrorDialog(response.payload.data.message);
         if (action.isConfirmed) await history.push("/logout");
-        value = action.payload.value; // Corrected the syntax here
+        valueNmbr = action.payload.value; // Corrected the syntax here
         setOverlayLoading(false);
       }
     } catch (error) {
@@ -108,6 +110,7 @@ export const ClaimPage = () => {
       const params = {
         pageNo: page,
         pageSize: sizePerPage,
+        purch_org: filterPurOrg, //valueNmbr,
       };
       try {
         const response = await dispatch(fetchClaim(params));
@@ -281,9 +284,9 @@ export const ClaimPage = () => {
                           type="text"
                           placeholder="Purchasing Organization"
                           onChange={(e) => {
-                            setValue(e.target.value); //** */
+                            setValueNmbr(e.target.value); 
                           }}
-                          value={value} //** */
+                          value={valueNmbr}
                           onKeyPress={handleKeyPress}
                         />
                       </Col>
