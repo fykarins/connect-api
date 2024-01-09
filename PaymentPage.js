@@ -40,6 +40,8 @@ export const PaymentPage = () => {
 
   const filterVendorCode =
     user.vendor_code === null ? vendorCode : user.vendor_code;
+  const filterPurOrg =
+    user.purch_org === null ? valueNmbr : user.purch_org;
 
   // Filter;
   const [regNumber, setRegNumber] = useState("");
@@ -47,7 +49,7 @@ export const PaymentPage = () => {
   const [paymentDoc, setPaymentDoc] = useState("");
   //const [paymentDate, setPaymentDate] = useState("");
   const [vendorCode, setVendorCode] = useState("");
-  const [value, setValue] = useState(""); //u/ deklarasi state
+  const [valueNmbr, setValueNmbr] = useState(""); //buat deklarasi state
 
   const handleSearch = async () => { //pemanggilan fungsi handle search
     const params = {
@@ -55,7 +57,7 @@ export const PaymentPage = () => {
       BSAK_XBLNR: regNumber,
       BSAK_BELNR: JVNumber,
       BSAK_AUGBL: paymentDoc,
-      purch_org: value, //parameter pembacaan u/ melakukan permintaan API
+      purch_org: filterPurOrg, //valueNmbr, //parameter pembacaan u/ melakukan permintaan API 
       pageNo: 1,
       pageSize: 10,
     };
@@ -76,7 +78,7 @@ export const PaymentPage = () => {
         // Corrected the syntax here
         const action = await showErrorDialog(response.payload.data.message);
         if (action.isConfirmed) await history.push("/logout");
-        value = action.payload.value; // Corrected the syntax here
+        valueNmbr = action.payload.value; // Corrected the syntax here
         setOverlayLoading(false);
       }
     } catch (error) {
@@ -101,6 +103,7 @@ export const PaymentPage = () => {
         BSAK_XBLNR: regNumber,
         BSAK_BELNR: JVNumber,
         BSAK_AUGBL: paymentDoc,
+        purch_org: filterPurOrg, //valueNmbr,
         pageNo: page,
         pageSize: sizePerPage,
       };
@@ -279,9 +282,9 @@ export const PaymentPage = () => {
                           type="text"
                           placeholder="Purchasing Organization"
                           onChange={(e) => {
-                            setValue(e.target.value); //** */
+                            setValueNmbr(e.target.value); 
                           }}
-                          value={value} //** */
+                          value={valueNmbr} 
                           onKeyPress={handleKeyPress}
                         />
                       </Col>
