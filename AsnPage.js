@@ -41,6 +41,7 @@ export const AsnPage = () => {
   const [vendorCode, setVendorCode] = useState("");
   const [deliveryDate, setDeliveryDate] = useState("");
   const [deliveryNote, setDeliveryNote] = useState("");
+  const [value, setValue] = useState(""); //u/ deklarasi state
 
   const filterVendorName =
     user.vendor_name === null ? vendorName : user.vendor_name;
@@ -50,17 +51,19 @@ export const AsnPage = () => {
     dispatch(resetData());
   }, [dispatch]);
 
-  const handleSearch = async () => {
+  const handleSearch = async () => { //pemanggilan fungsi handle search
     const params = {
       vendor_name: filterVendorName,
       vendor_code: vendorCode,
       delivery_date: deliveryDate,
       delivery_note: deliveryNote,
-      purch_org: user.purch_org,
+      purch_org: value, //parameter pembacaan u/ melakukan permintaan API
       pageNo: 1,
       pageSize: 10,
     };
+    console.log("test value : " + params.value);
     try {
+      // Corrected the syntax here
       const response = await dispatch(fetchAsn(params));
       if (response.payload.data.status === 200) {
         setOverlayLoading(false);
@@ -71,13 +74,22 @@ export const AsnPage = () => {
         const action = await showErrorDialog(response.payload.data.message);
         if (action.isConfirmed) await history.push("/logout");
       } else {
-        showErrorDialog(response.payload.data.message);
+       // Corrected the syntax here
+       const action = await showErrorDialog(response.payload.data.message);
+       if (action.isConfirmed) await history.push("/logout");
+       value = action.payload.value; // Corrected the syntax here
         setOverlayLoading(false);
       }
     } catch (error) {
       showErrorDialog(error.message);
       setOverlayLoading(false);
     }
+  };  
+
+  // API Service
+  const fetchInvoiceFromAPI = async (params) => {
+    const response = await fetch.post('/api/invoices', params);
+    return response.data;
   };
 
   const handleTableChange = async (
@@ -138,7 +150,7 @@ export const AsnPage = () => {
     }
   };
 
-  const handleKeyPress = (event) => {
+  const handleKeyPress = (event) => { //pencarian saat menekan tombol enter
     if (event.key === "Enter") {
       handleSearch();
     }
