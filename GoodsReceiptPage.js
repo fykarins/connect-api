@@ -73,9 +73,11 @@ export const GoodsReceiptPage = () => {
         // Corrected the syntax here
        const action = await showErrorDialog(response.payload.data.message);
        if (action.isConfirmed) await history.push("/logout");
-       value = action.payload.value; // Corrected the syntax here
       } else {
-        showErrorDialog(response.payload.data.message);
+        // Corrected the syntax here
+        const action = await showErrorDialog(response.payload.data.message);
+        if (action.isConfirmed) await history.push("/logout");
+        value = action.payload.value; // Corrected the syntax here
         setOverlayLoading(false);
       }
     } catch (error) {
