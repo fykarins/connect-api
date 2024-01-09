@@ -44,22 +44,25 @@ export const GoodsReceiptPage = () => {
   const [mjahr, setMjahr] = useState("");
   const [xblnr, setXblnr] = useState("");
   const [vendorCode, setVendorCode] = useState("");
+  const [value, setValue] = useState(""); //u/ deklarasi state
 
   const filterVendorCode =
     user.vendor_code === null ? vendorCode : user.vendor_code;
 
-  const handleSearch = async () => {
+    const handleSearch = async () => { //pemanggilan fungsi handle search
     const params = {
       MKPF_MBLNR: mblnr,
       MKPF_MJAHR: mjahr,
       MKPF_XBLNR: xblnr,
       MSEG_LIFNR: filterVendorCode,
-	  purch_org: user.purch_org,
+      purch_org: value, //parameter pembacaan u/ melakukan permintaan API
       pageNo: 1,
       pageSize: 10,
     };
     console.log(params, "params");
+    console.log("test value : " + params.value);
     try {
+      // Corrected the syntax here
       const response = await dispatch(fetchGoodsReceipt(params));
       if (response.payload.data.status === 200) {
         setOverlayLoading(false);
@@ -67,8 +70,10 @@ export const GoodsReceiptPage = () => {
         response.payload.data.error === "10008" ||
         response.payload.data.error === "10009"
       ) {
-        const action = await showErrorDialog(response.payload.data.message);
-        if (action.isConfirmed) await history.push("/logout");
+        // Corrected the syntax here
+       const action = await showErrorDialog(response.payload.data.message);
+       if (action.isConfirmed) await history.push("/logout");
+       value = action.payload.value; // Corrected the syntax here
       } else {
         showErrorDialog(response.payload.data.message);
         setOverlayLoading(false);
@@ -77,6 +82,12 @@ export const GoodsReceiptPage = () => {
       showErrorDialog(error.message);
       setOverlayLoading(false);
     }
+  };  
+
+  // API Service
+  const fetchInvoiceFromAPI = async (params) => {
+    const response = await fetch.post('/api/invoices', params);
+    return response.data;
   };
 
   const handleTableChange = async (
@@ -136,7 +147,7 @@ export const GoodsReceiptPage = () => {
     }
   };
 
-  const handleKeyPress = (event) => {
+  const handleKeyPress = (event) => { //pencarian saat menekan tombol enter
     if (event.key === "Enter") {
       handleSearch();
     }
