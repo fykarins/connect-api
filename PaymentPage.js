@@ -47,19 +47,22 @@ export const PaymentPage = () => {
   const [paymentDoc, setPaymentDoc] = useState("");
   //const [paymentDate, setPaymentDate] = useState("");
   const [vendorCode, setVendorCode] = useState("");
+  const [value, setValue] = useState(""); //u/ deklarasi state
 
-  const handleSearch = async () => {
+  const handleSearch = async () => { //pemanggilan fungsi handle search
     const params = {
       BSAK_LIFNR: filterVendorCode,
       BSAK_XBLNR: regNumber,
       BSAK_BELNR: JVNumber,
       BSAK_AUGBL: paymentDoc,
-
+      purch_org: value, //parameter pembacaan u/ melakukan permintaan API
       pageNo: 1,
       pageSize: 10,
     };
     console.log(params, "params");
+    console.log("test value : " + params.value);
     try {
+      // Corrected the syntax here
       const response = await dispatch(fetchPayment(params));
       if (response.payload.data.status === 200) {
         setOverlayLoading(false);
@@ -70,13 +73,22 @@ export const PaymentPage = () => {
         const action = await showErrorDialog(response.payload.data.message);
         if (action.isConfirmed) await history.push("/logout");
       } else {
-        showErrorDialog(response.payload.data.message);
+        // Corrected the syntax here
+        const action = await showErrorDialog(response.payload.data.message);
+        if (action.isConfirmed) await history.push("/logout");
+        value = action.payload.value; // Corrected the syntax here
         setOverlayLoading(false);
       }
     } catch (error) {
       showErrorDialog(error.message);
       setOverlayLoading(false);
     }
+  };  
+
+  // API Service
+  const fetchInvoiceFromAPI = async (params) => {
+    const response = await fetch.post('/api/invoices', params);
+    return response.data;
   };
 
   const handleTableChange = async (
@@ -136,7 +148,7 @@ export const PaymentPage = () => {
     }
   };
 
-  const handleKeyPress = (event) => {
+  const handleKeyPress = (event) => { //pencarian saat menekan tombol enter
     if (event.key === "Enter") {
       handleSearch();
     }
@@ -267,9 +279,9 @@ export const PaymentPage = () => {
                           type="text"
                           placeholder="Purchasing Organization"
                           onChange={(e) => {
-                            setVendorCode(e.target.value);
+                            setValue(e.target.value); //** */
                           }}
-                          value={vendorCode}
+                          value={value} //** */
                           onKeyPress={handleKeyPress}
                         />
                       </Col>
