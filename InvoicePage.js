@@ -40,6 +40,7 @@ export const InvoicePage = () => {
   const [vendorCode, setVendorCode] = useState("");
   const [refDocNo, setRefDocNo] = useState("");
   const [allocNmbr, setAllocNmbr] = useState("");
+  const [value, setValue] = useState(""); //buat deklarasi state //UBAH VALUE
 
   const filterVendorCode =
     user.vendor_code === null ? vendorCode : user.vendor_code;
@@ -49,16 +50,17 @@ export const InvoicePage = () => {
     dispatch(resetData());
   }, [dispatch]);
 
-  const handleSearch = async () => {
+  const handleSearch = async () => { //pemanggilan fungsi handle search
     const params = {
       vendor_code: filterVendorCode,
       ref_doc_no: refDocNo,
       alloc_nmbr: allocNmbr,
       with_po: "Y",
-      purch_org: user.purch_org,
+      purch_org: value, //parameter pembacaan u/ melakukan permintaan API //UBAH VALUE
       pageNo: 1,
       pageSize: 10,
     };
+    console.log("test value : " + params.value);
     try {
       const response = await dispatch(fetchInvoice(params));
       if (response.payload.data.status === 200) {
@@ -67,17 +69,28 @@ export const InvoicePage = () => {
         response.payload.data.error === "10008" ||
         response.payload.data.error === "10009"
       ) {
+        // Corrected the syntax here
         const action = await showErrorDialog(response.payload.data.message);
         if (action.isConfirmed) await history.push("/logout");
       } else {
-        showErrorDialog(response.payload.data.message);
+        // Corrected the syntax here
+        const action = await showErrorDialog(response.payload.data.message);
+        if (action.isConfirmed) await history.push("/logout");
+        value = action.payload.value; // Corrected the syntax here //UBAH VALUE
         setOverlayLoading(false);
       }
     } catch (error) {
       showErrorDialog(error.message);
       setOverlayLoading(false);
     }
+  };  
+
+  // API Service
+  const fetchInvoiceFromAPI = async (params) => {
+    const response = await fetch.post('/api/invoices', params);
+    return response.data;
   };
+
 
   const handleTableChange = async (
     type,
@@ -137,7 +150,7 @@ export const InvoicePage = () => {
     }
   };
 
-  const handleKeyPress = (event) => {
+  const handleKeyPress = (event) => { //pencarian saat menekan tombol enter
     if (event.key === "Enter") {
       handleSearch();
     }
@@ -263,15 +276,15 @@ export const InvoicePage = () => {
                             type="text"
                             placeholder="Purchasing Organization"
                             onChange={(e) => {
-                              setVendorCode(e.target.value);
+                              setValue(e.target.value); //UBAH VALUE
                             }}
-                            value={vendorCode}
+                            value={value} //UBAH VALUE
                             onKeyPress={handleKeyPress}
                           />
                         </Col>
                       </Form.Group>
                     )}
-                    <Button className="btn btn-danger" onClick={handleSearch}>
+                    <Button className="btn btn-danger" onClick={handleSearch}> 
                       Search
                     </Button>
                   </Col>
