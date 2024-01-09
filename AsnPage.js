@@ -41,10 +41,12 @@ export const AsnPage = () => {
   const [vendorCode, setVendorCode] = useState("");
   const [deliveryDate, setDeliveryDate] = useState("");
   const [deliveryNote, setDeliveryNote] = useState("");
-  const [value, setValue] = useState(""); //u/ deklarasi state
+  const [valueNmbr, setValueNmbr] = useState(""); //buat deklarasi state
 
   const filterVendorName =
     user.vendor_name === null ? vendorName : user.vendor_name;
+  const filterPurOrg =
+    user.purch_org === null ? valueNmbr : user.purch_org;
 
   useEffect(() => {
     // Reset on first load
@@ -57,7 +59,7 @@ export const AsnPage = () => {
       vendor_code: vendorCode,
       delivery_date: deliveryDate,
       delivery_note: deliveryNote,
-      purch_org: value, //parameter pembacaan u/ melakukan permintaan API
+      purch_org: filterPurOrg, //valueNmbr, //parameter pembacaan u/ melakukan permintaan API 
       pageNo: 1,
       pageSize: 10,
     };
@@ -77,7 +79,7 @@ export const AsnPage = () => {
        // Corrected the syntax here
        const action = await showErrorDialog(response.payload.data.message);
        if (action.isConfirmed) await history.push("/logout");
-       value = action.payload.value; // Corrected the syntax here
+       valueNmbr = action.payload.value; // Corrected the syntax here 
         setOverlayLoading(false);
       }
     } catch (error) {
@@ -102,7 +104,7 @@ export const AsnPage = () => {
         vendor_code: vendorCode,
         delivery_date: deliveryDate,
         delivery_note: deliveryNote,
-		purch_org: user.purch_org,
+        purch_org: filterPurOrg, //valueNmbr,
         pageNo: page,
         pageSize: sizePerPage,
       };
@@ -308,9 +310,9 @@ export const AsnPage = () => {
                           type="text"
                           placeholder="Purchasing Organization"
                           onChange={(e) => {
-                            setVendorCode(e.target.value);
+                            setValueNmbr(e.target.value); //UBAH VALUE
                           }}
-                          value={vendorCode}
+                          value={valueNmbr} 
                           onKeyPress={handleKeyPress}
                         />
                       </Col>
