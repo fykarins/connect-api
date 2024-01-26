@@ -258,7 +258,7 @@ export const ClaimPage = () => {
               </Form.Group>
               {user.purch_org !== null && (
                 <Form.Group as={Row} className="mt-5">
-                  <Form.Label column sm={6}>
+                  <Form.Label column sm={3}>
                     <b>Purchasing Organization</b>
                   </Form.Label>
                     <Col sm={6}>
@@ -273,7 +273,7 @@ export const ClaimPage = () => {
               )}
               {user.purch_org === null && (
                 <Form.Group as={Row} className="mt-5">
-                  <Form.Label column sm={6}>
+                  <Form.Label column sm={3}>
                     <b>Purchasing Organization</b>
                   </Form.Label>
                     <Col sm={6}>
