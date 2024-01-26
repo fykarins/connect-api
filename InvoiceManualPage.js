@@ -325,7 +325,7 @@ export const InvoiceManualPage = () => {
               
               {user.purch_org !== null && (
                 <Form.Group as={Row} className="mt-3">
-                  <Form.Label column sm={6}>
+                  <Form.Label column sm={3}>
                     <b>Purchasing Organization</b>
                   </Form.Label>
                     <Col sm={6}>
@@ -340,7 +340,7 @@ export const InvoiceManualPage = () => {
               )}
               {user.purch_org === null && (
                 <Form.Group as={Row} className="mt-3">
-                  <Form.Label column sm={6}>
+                  <Form.Label column sm={3}>
                       <b>Purchasing Organization</b>
                   </Form.Label>
                     <Col sm={6}>
